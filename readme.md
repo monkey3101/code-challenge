@@ -1,19 +1,14 @@
-# 99Tech Code Challenge #1 #
-
-Note that if you fork this repository, your responses may be publicly linked to this repo.  
-Please submit your application along with the solutions attached or linked.   
-
-It is important that you minimally attempt the problems, even if you do not arrive at a working solution.
-
-## Submission ##
-You can either provide a link to an online repository, attach the solution in your application, or whichever method you prefer.
-We're cool as long as we can view your solution without any pain.
+# 99Tech Code Challenge 
 
 # Problem 1
 You just need to run the index.js in folder problem 1
 
 # Problem 2
 Since there is no limit of using AI so this project mostly build with AI/Copilot agent. 
+
+In short : 
+
+Open project => run "npm install" => type "cd src/problem2 => type "npm run dev" to run problem2
 
 # Problem 3
 Just ignore the node module and those dependencies, I just installed that for viewing purpose with react. You only need to review file index.tsx to see my comment with fixes.
