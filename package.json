@@ -1,0 +1,16 @@
+{
+  "name": "code-challenge",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "src/problem2",
+    "src/problem3"
+  ],
+  "scripts": {
+    "dev:p2": "npm run dev --workspace=src/problem2",
+    "dev:p3": "npm run dev --workspace=src/problem3",
+    "build:p2": "npm run build --workspace=src/problem2",
+    "build:p3": "npm run build --workspace=src/problem3",
+    "build": "npm run build:p2 && npm run build:p3"
+  }
+}

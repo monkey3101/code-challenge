@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Currency Swap – Mockup</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      padding: 16px;
+    }
+
+    /* ── Page wrapper ── */
+    .page { display: flex; flex-direction: column; align-items: center; gap: 24px; width: 100%; }
+
+    .logo { color: #a78bfa; font-size: 22px; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+    .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: #7c3aed; box-shadow: 0 0 10px #7c3aed; }
+
+    /* ── Card ── */
+    .card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 24px;
+      width: 100%;
+      max-width: 460px;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    /* ── Card header ── */
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .card-title { color: #fff; font-size: 18px; font-weight: 700; }
+    .settings-btn {
+      background: rgba(255,255,255,0.08);
+      border: none;
+      border-radius: 10px;
+      width: 36px; height: 36px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #a78bfa;
+      font-size: 18px;
+      transition: background 0.2s;
+    }
+    .settings-btn:hover { background: rgba(167,139,250,0.2); }
+
+    /* ── Token panel ── */
+    .token-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
+    }
+    .panel-label {
+      color: #9ca3af;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .panel-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .amount-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 28px;
+      font-weight: 600;
+      width: 0;
+      min-width: 0;
+    }
+    .amount-input::placeholder { color: #4b5563; }
+    .amount-input[readonly] { cursor: default; color: #a78bfa; }
+
+    .token-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124,58,237,0.25);
+      border: 1px solid rgba(124,58,237,0.4);
+      border-radius: 50px;
+      padding: 6px 12px 6px 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .token-selector:hover { background: rgba(124,58,237,0.4); border-color: #7c3aed; }
+    .token-icon {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: #fff;
+      overflow: hidden;
+    }
+    .token-icon img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    .token-symbol { color: #fff; font-size: 15px; font-weight: 700; }
+    .chevron { color: #a78bfa; font-size: 10px; margin-left: 2px; }
+
+    .panel-bottom {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-top: 8px;
+    }
+    .usd-value { color: #6b7280; font-size: 13px; }
+    .balance { color: #6b7280; font-size: 13px; }
+    .balance span { color: #a78bfa; cursor: pointer; }
+    .balance span:hover { color: #c4b5fd; }
+
+    /* ── Swap arrow ── */
+    .swap-arrow-wrapper {
+      display: flex; justify-content: center;
+      position: relative; margin: -4px 0; z-index: 1;
+    }
+    .swap-arrow-btn {
+      background: #1e1b4b;
+      border: 3px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      width: 40px; height: 40px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #a78bfa;
+      font-size: 18px;
+      transition: background 0.2s, transform 0.3s;
+    }
+    .swap-arrow-btn:hover { background: #2e1b6e; transform: rotate(180deg); }
+
+    /* ── Rate info ── */
+    .rate-info {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(255,255,255,0.03);
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin-top: 12px;
+    }
+    .rate-text { color: #9ca3af; font-size: 13px; }
+    .rate-value { color: #a78bfa; font-size: 13px; font-weight: 600; }
+    .rate-fee { color: #6b7280; font-size: 12px; }
+
+    /* ── Confirm button ── */
+    .confirm-btn {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 16px;
+      font-size: 16px; font-weight: 700;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: opacity 0.2s, transform 0.1s;
+      background: linear-gradient(135deg, #7c3aed, #4f46e5);
+      color: #fff;
+      letter-spacing: 0.5px;
+      box-shadow: 0 8px 24px rgba(124,58,237,0.35);
+    }
+    .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .confirm-btn:active { transform: translateY(0); }
+    .confirm-btn.loading {
+      background: linear-gradient(135deg, #5b21b6, #3730a3);
+      cursor: not-allowed;
+    }
+
+    /* ── Dropdown overlay (mockup static) ── */
+    .dropdown {
+      position: absolute;
+      top: 60px; right: 0;
+      background: #1a1535;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      padding: 12px;
+      width: 260px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      z-index: 100;
+    }
+    .dropdown-search {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 8px 12px;
+      width: 100%;
+      color: #fff;
+      font-size: 14px;
+      outline: none;
+      margin-bottom: 10px;
+    }
+    .dropdown-search::placeholder { color: #6b7280; }
+    .dropdown-list { display: flex; flex-direction: column; gap: 4px; max-height: 200px; overflow-y: auto; }
+    .dropdown-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 10px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .dropdown-item:hover { background: rgba(124,58,237,0.2); }
+    .dropdown-item.active { background: rgba(124,58,237,0.3); }
+    .di-info { display: flex; flex-direction: column; flex: 1; }
+    .di-symbol { color: #fff; font-size: 14px; font-weight: 600; }
+    .di-price { color: #6b7280; font-size: 12px; }
+    .di-price span { color: #a78bfa; }
+
+    /* Relative wrapper for dropdown demo */
+    .relative { position: relative; }
+
+    /* ── Error message ── */
+    .error-msg {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.3);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-top: 10px;
+      color: #f87171;
+      font-size: 13px;
+    }
+
+    /* ── Loading spinner (mockup) ── */
+    .spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Section divider ── */
+    .section-title {
+      color: #6b7280;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+      margin: 40px 0 12px;
+    }
+
+    /* ── States row ── */
+    .states-row { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; max-width: 960px; width: 100%; }
+    .state-card { flex: 1; min-width: 280px; max-width: 340px; }
+    .state-label {
+      color: #9ca3af; font-size: 11px; font-weight: 600;
+      text-align: center; margin-bottom: 8px; letter-spacing: 0.5px; text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <div class="logo"><div class="logo-dot"></div>SwapUI</div>
+
+  <!-- ═══════════════════════════════ MAIN STATE ═══════════ -->
+  <div class="state-label" style="color:#7c3aed;font-size:13px">MAIN FORM — Default State</div>
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Swap Tokens</div>
+      <button class="settings-btn">⚙</button>
+    </div>
+
+    <!-- YOU PAY -->
+    <div class="token-panel">
+      <div class="panel-label">You Pay</div>
+      <div class="panel-row">
+        <input class="amount-input" placeholder="0.00" value="1.5" />
+        <div class="token-selector">
+          <div class="token-icon">
+            <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/ETH.svg" alt="ETH" onerror="this.parentElement.textContent='ETH'" />
+          </div>
+          <span class="token-symbol">ETH</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="panel-bottom">
+        <span class="usd-value">≈ $2,468.90</span>
+        <span class="balance">Balance: 4.23 <span>MAX</span></span>
+      </div>
+    </div>
+
+    <!-- SWAP ARROW -->
+    <div class="swap-arrow-wrapper" style="margin:8px 0">
+      <button class="swap-arrow-btn">⇅</button>
+    </div>
+
+    <!-- YOU RECEIVE -->
+    <div class="token-panel">
+      <div class="panel-label">You Receive</div>
+      <div class="panel-row">
+        <input class="amount-input" readonly value="3,812.15" />
+        <div class="token-selector">
+          <div class="token-icon">
+            <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USDC.svg" alt="USDC" onerror="this.parentElement.textContent='USDC'" />
+          </div>
+          <span class="token-symbol">USDC</span>
+          <span class="chevron">▼</span>
+        </div>
+      </div>
+      <div class="panel-bottom">
+        <span class="usd-value">≈ $3,812.15</span>
+        <span class="balance">Balance: 100.00</span>
+      </div>
+    </div>
+
+    <!-- RATE INFO -->
+    <div class="rate-info">
+      <span class="rate-text">Exchange Rate</span>
+      <div style="text-align:right">
+        <div class="rate-value">1 ETH ≈ 2,541.43 USDC</div>
+        <div class="rate-fee">Fee: ~0.1%</div>
+      </div>
+    </div>
+
+    <button class="confirm-btn">CONFIRM SWAP</button>
+  </div>
+
+  <!-- ═══════════════════════════════ STATES ROW ═══════════ -->
+  <div class="section-title">UI States</div>
+  <div class="states-row">
+
+    <!-- TOKEN DROPDOWN OPEN -->
+    <div class="state-card">
+      <div class="state-label">Token Dropdown Open</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Select Token</div>
+        </div>
+        <div class="relative">
+          <div class="token-panel">
+            <div class="panel-label">You Pay</div>
+            <div class="panel-row">
+              <input class="amount-input" placeholder="0.00" />
+              <div class="token-selector" style="background:rgba(124,58,237,0.4);border-color:#7c3aed">
+                <div class="token-icon">
+                  <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/ETH.svg" onerror="this.parentElement.textContent='ETH'" />
+                </div>
+                <span class="token-symbol">ETH</span>
+                <span class="chevron">▲</span>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown" style="top:auto;margin-top:8px;position:relative;width:100%">
+            <input class="dropdown-search" placeholder="🔍  Search token..." value="US" />
+            <div class="dropdown-list">
+              <div class="dropdown-item active">
+                <div class="token-icon" style="background:linear-gradient(135deg,#2775ca,#6ab0f5)">
+                  <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USDC.svg" onerror="this.parentElement.textContent='U'" />
+                </div>
+                <div class="di-info">
+                  <span class="di-symbol">USDC</span>
+                  <span class="di-price">$<span>0.9898</span></span>
+                </div>
+              </div>
+              <div class="dropdown-item">
+                <div class="token-icon" style="background:linear-gradient(135deg,#26a17b,#0a6e55)">
+                  <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USDT.svg" onerror="this.parentElement.textContent='U'" />
+                </div>
+                <div class="di-info">
+                  <span class="di-symbol">USDT</span>
+                  <span class="di-price">$<span>1.00</span></span>
+                </div>
+              </div>
+              <div class="dropdown-item">
+                <div class="token-icon" style="background:linear-gradient(135deg,#f59e0b,#b45309)">
+                  <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USC.svg" onerror="this.parentElement.textContent='U'" />
+                </div>
+                <div class="di-info">
+                  <span class="di-symbol">USC</span>
+                  <span class="di-price">$<span>0.994</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div class="state-card">
+      <div class="state-label">Loading / Confirming</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Swap Tokens</div>
+          <button class="settings-btn">⚙</button>
+        </div>
+        <div class="token-panel">
+          <div class="panel-label">You Pay</div>
+          <div class="panel-row">
+            <input class="amount-input" value="1.5" readonly />
+            <div class="token-selector">
+              <div class="token-icon">
+                <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/ETH.svg" onerror="this.parentElement.textContent='ETH'" />
+              </div>
+              <span class="token-symbol">ETH</span>
+            </div>
+          </div>
+        </div>
+        <div class="swap-arrow-wrapper" style="margin:8px 0">
+          <button class="swap-arrow-btn" style="cursor:not-allowed;opacity:0.5">⇅</button>
+        </div>
+        <div class="token-panel">
+          <div class="panel-label">You Receive</div>
+          <div class="panel-row">
+            <input class="amount-input" readonly value="3,812.15" />
+            <div class="token-selector">
+              <div class="token-icon">
+                <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USDC.svg" onerror="this.parentElement.textContent='USDC'" />
+              </div>
+              <span class="token-symbol">USDC</span>
+            </div>
+          </div>
+        </div>
+        <div class="rate-info">
+          <span class="rate-text">Processing transaction…</span>
+          <span class="rate-value">⏳</span>
+        </div>
+        <button class="confirm-btn loading">
+          <span class="spinner"></span>Confirming Swap…
+        </button>
+      </div>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div class="state-card">
+      <div class="state-label">Validation Error</div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Swap Tokens</div>
+          <button class="settings-btn">⚙</button>
+        </div>
+        <div class="token-panel" style="border-color:rgba(239,68,68,0.4)">
+          <div class="panel-label">You Pay</div>
+          <div class="panel-row">
+            <input class="amount-input" style="color:#f87171" value="-5" />
+            <div class="token-selector">
+              <div class="token-icon">
+                <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/ETH.svg" onerror="this.parentElement.textContent='ETH'" />
+              </div>
+              <span class="token-symbol">ETH</span>
+              <span class="chevron">▼</span>
+            </div>
+          </div>
+          <div class="panel-bottom">
+            <span class="usd-value" style="color:#f87171">Invalid amount</span>
+            <span class="balance">Balance: 4.23 <span>MAX</span></span>
+          </div>
+        </div>
+        <div class="error-msg">⚠ Amount must be greater than 0</div>
+        <div class="swap-arrow-wrapper" style="margin:8px 0">
+          <button class="swap-arrow-btn">⇅</button>
+        </div>
+        <div class="token-panel">
+          <div class="panel-label">You Receive</div>
+          <div class="panel-row">
+            <input class="amount-input" readonly placeholder="0.00" />
+            <div class="token-selector">
+              <div class="token-icon">
+                <img src="https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/USDC.svg" onerror="this.parentElement.textContent='USDC'" />
+              </div>
+              <span class="token-symbol">USDC</span>
+              <span class="chevron">▼</span>
+            </div>
+          </div>
+        </div>
+        <button class="confirm-btn" style="opacity:0.4;cursor:not-allowed;background:linear-gradient(135deg,#374151,#1f2937)">CONFIRM SWAP</button>
+      </div>
+    </div>
+
+  </div><!-- /.states-row -->
+
+  <!-- ═══════════════════════════════ COMPONENT PLAN ═══════ -->
+  <div class="section-title">Architecture Plan</div>
+  <div class="card" style="max-width:700px;color:#d1d5db;line-height:1.8;font-size:14px">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div>
+        <div style="color:#a78bfa;font-weight:700;margin-bottom:8px">📁 File Structure</div>
+        <pre style="color:#9ca3af;font-size:12px;line-height:1.7">src/problem2/
+├── index.html
+├── package.json
+├── vite.config.ts
+└── src/
+    ├── main.tsx
+    ├── App.tsx
+    ├── types/
+    │   └── token.ts
+    ├── hooks/
+    │   └── useTokenPrices.ts
+    ├── components/
+    │   ├── SwapCard.tsx
+    │   ├── TokenPanel.tsx
+    │   ├── TokenSelector.tsx
+    │   ├── RateInfo.tsx
+    │   └── SwapButton.tsx
+    └── utils/
+        └── exchange.ts</pre>
+      </div>
+      <div>
+        <div style="color:#a78bfa;font-weight:700;margin-bottom:8px">✅ Features</div>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:6px">
+          <li>🔵 Fetch prices from API on load</li>
+          <li>🔵 Token selector w/ search + SVG icons</li>
+          <li>🔵 Auto-calculate receive amount</li>
+          <li>🔵 Exchange rate display</li>
+          <li>🔵 Swap direction button</li>
+          <li>🔵 Input validation + error messages</li>
+          <li>🔵 Loading state on confirm (2s mock)</li>
+          <li>🔵 Success toast notification</li>
+          <li>🔵 Responsive + accessible</li>
+          <li>🔵 Graceful fallback for missing icons</li>
+        </ul>
+        <div style="color:#a78bfa;font-weight:700;margin:16px 0 8px">🎨 Design Tokens</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span style="background:#7c3aed;border-radius:6px;padding:2px 8px;font-size:11px">Purple #7c3aed</span>
+          <span style="background:#4f46e5;border-radius:6px;padding:2px 8px;font-size:11px">Indigo #4f46e5</span>
+          <span style="background:#1a1535;border-radius:6px;padding:2px 8px;font-size:11px;border:1px solid rgba(255,255,255,0.1)">Dark #1a1535</span>
+          <span style="background:#a78bfa;border-radius:6px;padding:2px 8px;font-size:11px;color:#1a1535">Lavender</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
